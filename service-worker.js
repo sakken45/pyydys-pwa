@@ -11,7 +11,7 @@
  * register-sw script so users automatically receive updates.
  */
 
-const CACHE_NAME = "pyydys-cache-vmq5hr6bf";
+const CACHE_NAME = "pyydys-cache-vmq5idnf2";
 const APP_SHELL = [
   ".",
   "index.html",
