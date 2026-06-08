@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/pyydys-pwa/static/css/main.b02b083a.css",
+    "main.js": "/pyydys-pwa/static/js/main.e676f4e0.js",
+    "index.html": "/pyydys-pwa/index.html",
+    "main.b02b083a.css.map": "/pyydys-pwa/static/css/main.b02b083a.css.map",
+    "main.e676f4e0.js.map": "/pyydys-pwa/static/js/main.e676f4e0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b02b083a.css",
+    "static/js/main.e676f4e0.js"
+  ]
+}
