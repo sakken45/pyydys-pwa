@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/pyydys-pwa/static/css/main.dc9dfc9a.css",
-    "main.js": "/pyydys-pwa/static/js/main.e676f4e0.js",
+    "main.css": "/pyydys-pwa/static/css/main.6d341eea.css",
+    "main.js": "/pyydys-pwa/static/js/main.4d2c8793.js",
     "index.html": "/pyydys-pwa/index.html",
-    "main.dc9dfc9a.css.map": "/pyydys-pwa/static/css/main.dc9dfc9a.css.map",
-    "main.e676f4e0.js.map": "/pyydys-pwa/static/js/main.e676f4e0.js.map"
+    "main.6d341eea.css.map": "/pyydys-pwa/static/css/main.6d341eea.css.map",
+    "main.4d2c8793.js.map": "/pyydys-pwa/static/js/main.4d2c8793.js.map"
   },
   "entrypoints": [
-    "static/css/main.dc9dfc9a.css",
-    "static/js/main.e676f4e0.js"
+    "static/css/main.6d341eea.css",
+    "static/js/main.4d2c8793.js"
   ]
 }
