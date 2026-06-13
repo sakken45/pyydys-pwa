@@ -6,6 +6,9 @@ import {
   Wrench,
   ClipboardList,
   Archive as ArchiveIcon,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  ListFilter,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/app-context";
@@ -13,6 +16,7 @@ import { JobCard } from "@/components/JobCard";
 import ServiceDialog from "@/components/ServiceDialog";
 import OddJobDialog from "@/components/OddJobDialog";
 import CompleteDialog from "@/components/CompleteDialog";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 function ColumnHeader({ icon: Icon, title, count, onAdd, addLabel, testId }) {
@@ -49,6 +53,40 @@ function EmptyState({ message, testId }) {
   );
 }
 
+function FilterPill({ active, onClick, label, count, icon, tone, testId }) {
+  // tone: 'neutral' | 'in' | 'out'
+  const activeStyles = {
+    neutral: "bg-slate-900 text-white",
+    in: "bg-blue-600 text-white",
+    out: "bg-amber-500 text-white",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      data-testid={testId}
+      aria-pressed={active}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all active:scale-95",
+        active
+          ? `${activeStyles[tone]} border-transparent shadow-sm`
+          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50",
+      )}
+    >
+      {icon}
+      <span>{label}</span>
+      <span
+        className={cn(
+          "font-mono text-[10px] font-bold",
+          active ? "opacity-80" : "text-slate-400",
+        )}
+      >
+        {count}
+      </span>
+    </button>
+  );
+}
+
 export default function ActivePage() {
   const { t, services, setServices, oddJobs, setOddJobs } = useApp();
 
@@ -62,17 +100,40 @@ export default function ActivePage() {
     editing: null,
   });
   const [completing, setCompleting] = useState(null); // { kind, item }
+  const [serviceFilter, setServiceFilter] = useState("all"); // 'all' | 'in' | 'out'
 
   const filteredServices = useMemo(() => {
     const q = query.trim().toLowerCase();
     return services
       .filter((s) => s.status !== "done")
+      .filter((s) => (serviceFilter === "all" ? true : s.action === serviceFilter))
       .filter((s) =>
         !q
           ? true
           : `${s.vehicle} ${s.place} ${s.notes}`.toLowerCase().includes(q),
       )
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => {
+        // Group IN first, then OUT, then by date ascending within each group
+        if (a.action !== b.action) return a.action === "in" ? -1 : 1;
+        return a.date.localeCompare(b.date);
+      });
+  }, [services, query, serviceFilter]);
+
+  // Raw counts per action (ignoring the action filter) — used for the filter pill labels.
+  const serviceCounts = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const open = services
+      .filter((s) => s.status !== "done")
+      .filter((s) =>
+        !q
+          ? true
+          : `${s.vehicle} ${s.place} ${s.notes}`.toLowerCase().includes(q),
+      );
+    return {
+      all: open.length,
+      in: open.filter((s) => s.action === "in").length,
+      out: open.filter((s) => s.action === "out").length,
+    };
   }, [services, query]);
 
   const filteredOddJobs = useMemo(() => {
@@ -161,6 +222,44 @@ export default function ActivePage() {
             addLabel={t("newServiceBtn")}
             testId="add-service-btn"
           />
+
+          {/* IN / OUT / All filter */}
+          <div
+            className="mt-4 flex flex-wrap items-center gap-2"
+            data-testid="service-filter"
+          >
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+              <ListFilter className="h-3 w-3" />
+              {t("filterLabel")}
+            </span>
+            <FilterPill
+              active={serviceFilter === "all"}
+              onClick={() => setServiceFilter("all")}
+              testId="service-filter-all"
+              label={t("filterAll")}
+              count={serviceCounts.all}
+              tone="neutral"
+            />
+            <FilterPill
+              active={serviceFilter === "in"}
+              onClick={() => setServiceFilter("in")}
+              testId="service-filter-in"
+              icon={<ArrowDownToLine className="h-3 w-3" />}
+              label={t("labelIn")}
+              count={serviceCounts.in}
+              tone="in"
+            />
+            <FilterPill
+              active={serviceFilter === "out"}
+              onClick={() => setServiceFilter("out")}
+              testId="service-filter-out"
+              icon={<ArrowUpFromLine className="h-3 w-3" />}
+              label={t("labelOut")}
+              count={serviceCounts.out}
+              tone="out"
+            />
+          </div>
+
           <div className="mt-4 flex flex-col gap-3">
             {filteredServices.length === 0 ? (
               <EmptyState

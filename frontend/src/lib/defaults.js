@@ -36,6 +36,12 @@ export const DEFAULT_LABELS = {
   labelIn: "IN",
   labelOut: "OUT",
 
+  // Service filter (Active page)
+  filterAll: "All",
+  filterIn: "IN only",
+  filterOut: "OUT only",
+  filterLabel: "Filter",
+
   // Service form
   serviceFormNew: "New Service",
   serviceFormEdit: "Edit Service",
